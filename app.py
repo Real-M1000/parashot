@@ -173,4 +173,5 @@ html_template = """
     return render_template_string(html_template, event_name=event_name, match=match, images=images)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    # host='0.0.0.0' ist entscheidend für den Zugriff von anderen Geräten!
+    app.run(host='0.0.0.0', port=5000, debug=True)
