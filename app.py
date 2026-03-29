@@ -5,7 +5,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def check_files():
-    # Wir schauen in den "Tunnel"-Ordner im Container
     pfad = '/app/Files/BzT'
     
     try:
@@ -20,4 +19,4 @@ def check_files():
         return f"Ein Fehler ist aufgetreten: {str(e)}"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
