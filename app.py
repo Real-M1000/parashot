@@ -75,35 +75,98 @@ def gallery():
             match = img
             break
 
-    html_template = """
+html_template = """
     <!DOCTYPE html>
-    <html>
+    <html lang="de">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{ event_name }}</title>
         <style>
-            body { background: #000; color: #fff; font-family: sans-serif; text-align: center; margin: 0; }
-            .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-            .main-img { max-width: 95%; max-height: 80vh; border-radius: 12px; box-shadow: 0 0 30px rgba(255,215,0,0.2); }
-            h1 { color: #f1c40f; margin-bottom: 5px; }
-            .msg { background: #222; padding: 20px; border-radius: 10px; border: 1px dashed #444; }
+            /* Grund-Setup: Kein Scrollen, schwarzer Hintergrund */
+            body, html { 
+                margin: 0; 
+                padding: 0; 
+                width: 100%; 
+                height: 100%; 
+                background-color: black; 
+                color: white; 
+                font-family: sans-serif;
+                overflow: hidden; /* Verhindert Scrollbalken im Vollbild */
+            }
+
+            /* Container für das Hauptbild */
+            .fullscreen-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100vw;
+                height: 100vh;
+                position: relative;
+            }
+
+            /* Das Bild selbst: Maximale Größe bei Erhalt der Proportionen */
+            .main-img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain; /* Bild wird nicht beschnitten */
+            }
+
+            /* Overlay-Text (Titel der Parasha) */
+            .overlay-title {
+                position: absolute;
+                top: 20px;
+                background: rgba(0, 0, 0, 0.6);
+                padding: 10px 20px;
+                border-radius: 10px;
+                color: #f1c40f;
+                font-size: 2em;
+                pointer-events: none; /* Klicks gehen durch den Text aufs Bild */
+            }
+
+            /* Mini-Galerie am unteren Rand (optional, sehr dezent) */
+            .mini-footer {
+                position: absolute;
+                bottom: 10px;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                gap: 5px;
+                opacity: 0.3;
+                transition: opacity 0.3s;
+            }
+            .mini-footer:hover { opacity: 1; }
+            .mini-footer img { height: 40px; border: 1px solid #fff; }
+
+            .error-msg {
+                text-align: center;
+                border: 2px dashed #444;
+                padding: 40px;
+            }
         </style>
     </head>
     <body>
-        <div class="hero">
-            <h1>{{ event_name }}</h1>
-            
+
+        <div class="fullscreen-container">
             {% if match %}
-                <img src="/bilder/{{ match }}" class="main-img">
-                <p style="color: #666;">Datei: {{ match }}</p>
+                <div class="overlay-title">{{ event_name }}</div>
+                <img src="/bilder/{{ match }}" class="main-img" alt="{{ event_name }}">
             {% else %}
-                <div class="msg">
-                    <p>Keine Parasha diese Woche (Feiertag).</p>
-                    <p>Suchbegriff: <b>{{ event_name }}</b></p>
-                    <p>Lade ein Bild mit dem Namen <b>{{ event_name }}.jpg</b> hoch.</p>
+                <div class="error-msg">
+                    <h1>{{ event_name }}</h1>
+                    <p>Keine passende Datei gefunden.</p>
+                    <p>Gesucht wurde nach: <b>{{ event_name }}</b></p>
                 </div>
             {% endif %}
         </div>
+
+        <div class="mini-footer">
+            {% for img in images %}
+                <img src="/bilder/{{ img }}" title="{{ img }}">
+            {% endfor %}
+        </div>
+
     </body>
     </html>
     """
