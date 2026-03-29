@@ -74,7 +74,7 @@ def gallery():
     <html lang="de">
     <head>
         <meta charset="UTF-8">
-        <title>{{ event_name }}</title>
+        <title>Am nächsten Schabbat ist: {{ event_name }}</title>
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body, html { 
