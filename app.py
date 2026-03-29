@@ -3,7 +3,7 @@ from flask import Flask, send_from_directory, render_template_string
 
 app = Flask(__name__)
 # Das ist der Pfad im Container (dein Volume)
-IMAGE_FOLDER = '/app/daten'
+IMAGE_FOLDER = '/app/Files/BzT'
 
 # Route, um die Bilder für den Browser verfügbar zu machen
 @app.route('/bilder/<filename>')
