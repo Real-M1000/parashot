@@ -4,8 +4,8 @@ FROM python:3.11-slim
 # Arbeitsverzeichnis im Container
 WORKDIR /app
 
-# Installiere Flask
-RUN pip install flask
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiere die App in den Container
 COPY app.py .
