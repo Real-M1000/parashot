@@ -2,17 +2,17 @@ import os
 from flask import Flask, send_from_directory, render_template_string
 
 app = Flask(__name__)
-# Das ist der Pfad im Container (dein Volume)
+
 IMAGE_FOLDER = '/app/Files/BzT'
 
-# Route, um die Bilder für den Browser verfügbar zu machen
+
 @app.route('/bilder/<filename>')
 def serve_image(filename):
     return send_from_directory(IMAGE_FOLDER, filename)
 
 @app.route('/')
 def gallery():
-    # Liste alle Dateien auf, die Endungen wie jpg, png etc. haben
+    
     valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.webp')
     images = [f for f in os.listdir(IMAGE_FOLDER) 
               if f.lower().endswith(valid_extensions)]
@@ -30,7 +30,7 @@ def gallery():
         {% endfor %}
     </div>
     {% if not images %}
-        <p>Keine Bilder im Ordner gefunden. Lade mal ein .jpg hoch!</p>
+        <p>Keine Bilder in 192.168.178.44/volume2/Dateien/BzT gefunden. Bist du zu dumm ein .jpg hochzuladen?</br># erlaubte Endungen sind .jpg, .jpeg, .png, .gif und .webp</p>
     {% endif %}
     """
     return render_template_string(html_template, images=images)
