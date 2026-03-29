@@ -25,7 +25,7 @@ def get_current_event():
     try:
         response = requests.get(url, params=params, timeout=10)
         data = response.json()
-        items = data.get("items", []
+        items = data.get("items", [])
         for item in items:
             if item.get("category") == "parashat":
                 return item.get("title").replace("Parashat ", "")
@@ -69,7 +69,6 @@ def gallery():
                 match = img
                 break
 
-    # Das HTML-Gerüst für GROSS & RUNDE ECKEN
     html_template = """
     <!DOCTYPE html>
     <html lang="de">
@@ -77,72 +76,39 @@ def gallery():
         <meta charset="UTF-8">
         <title>{{ event_name }}</title>
         <style>
-            /* Entfernt alle Standard-Ränder des Browsers */
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            
             body, html { 
-                width: 100%; 
-                height: 100%; 
-                background-color: #000; /* Tiefschwarzer Hintergrund */
-                overflow: hidden; /* Verhindert Scrollbalken komplett */
-                font-family: 'Segoe UI', sans-serif;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                width: 100%; height: 100%; background-color: #000; 
+                overflow: hidden; font-family: sans-serif;
+                display: flex; justify-content: center; align-items: center;
             }
-
-            /* Der Container füllt den Viewport, lässt aber etwas Luft */
             .fullscreen-box {
-                width: 100vw;
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                position: relative;
-                padding: 15px; /* Kleiner Abstand zum Rand, damit die Ecken sichtbar sind */
+                width: 100vw; height: 100vh; display: flex;
+                justify-content: center; align-items: center;
+                position: relative; padding: 20px;
             }
-
-            /* Das Bild: Skaliert auf maximale Größe, behält Proportionen, RUNDE ECKEN */
             .main-img {
-                max-width: 100%;
-                max-height: 100%;
-                object-fit: contain; /* Füllt den Platz optimal aus */
-                display: block;
-                
-                /* --- RUNDE ECKEN & STYLE --- */
-                border-radius: 20px; /* Hier stellst du die Rundung ein (z.B. 10px bis 50px) */
-                box-shadow: 0 10px 30px rgba(0,0,0,0.7); /* Ein weicher Schatten für Tiefe */
-                border: 2px solid #222; /* Ein dezenter Rahmen */
+                max-width: 100%; max-height: 100%; object-fit: contain;
+                display: block; border-radius: 30px; /* Hier sind deine runden Ecken */
+                box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
             }
-
-            /* Der Titel schwebt dezent oben, über dem Bild */
             .title-overlay {
-                position: absolute;
-                top: 25px;
-                padding: 8px 25px;
-                background: rgba(0, 0, 0, 0.6);
-                border-radius: 50px;
-                color: #f1c40f;
-                font-size: 2.2rem;
-                font-weight: bold;
-                text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-                z-index: 10;
-                pointer-events: none; /* Klicks gehen durch den Titel */
+                position: absolute; top: 30px; padding: 10px 30px;
+                background: rgba(0, 0, 0, 0.6); border-radius: 50px;
+                color: #f1c40f; font-size: 2.5rem; font-weight: bold;
+                text-shadow: 2px 2px 10px #000; z-index: 10;
             }
-
-            /* Falls kein Bild da ist */
-            .empty-state { text-align: center; color: #555; border: 2px dashed #333; padding: 50px; border-radius: 15px; }
         </style>
     </head>
     <body>
         <div class="fullscreen-box">
+            <div class="title-overlay">{{ event_name }}</div>
             {% if match %}
-                <div class="title-overlay">{{ event_name }}</div>
                 <img src="/bilder/{{ match }}" class="main-img">
             {% else %}
-                <div class="empty-state">
-                    <div class="title-overlay" style="position: static; font-size: 1.5rem;">{{ event_name }}</div>
-                    <p style="margin-top: 15px;">Kein Bild gefunden.</p>
+                <div style="color: #444; text-align: center;">
+                    <h1>{{ event_name }}</h1>
+                    <p>Bild fehlt im Ordner.</p>
                 </div>
             {% endif %}
         </div>
