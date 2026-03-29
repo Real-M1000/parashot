@@ -5,6 +5,5 @@ services:
     ports:
       - "8080:5000"
     volumes:
-      # Hier spiegelst du den Ordner:
       - /mnt/NAS/BzT:/app/Files/BzT
     restart: always
