@@ -19,7 +19,8 @@ def gallery():
     
     # Ein ganz einfaches HTML-Gerüst für die Anzeige
     html_template = """
-    <h1>Meine Server-Bilder</h1>
+    <h1>It works!</h1>
+    <p>Hello World!</p>
     <div style="display: flex; flex-wrap: wrap; gap: 20px;">
         {% for img in images %}
             <div style="text-align: center;">
