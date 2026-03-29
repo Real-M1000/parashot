@@ -74,7 +74,7 @@ def gallery():
     <html lang="de">
     <head>
         <meta charset="UTF-8">
-        <title>Am nächsten Schabbat ist: {{ event_name }}</title>
+        <title>{{ event_name }}</title>
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body, html { 
@@ -102,7 +102,7 @@ def gallery():
     </head>
     <body>
         <div class="fullscreen-box">
-            <div class="title-overlay">{{ event_name }}</div>
+            <div class="title-overlay">Am nächsten Schabbat ist: {{ event_name }}</div>
             {% if match %}
                 <img src="/bilder/{{ match }}" class="main-img">
             {% else %}
