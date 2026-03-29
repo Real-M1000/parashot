@@ -1,7 +1,10 @@
 version: '3.8'
 services:
-  web:
+  flask-app:
     build: .
     ports:
       - "8080:5000"
+    volumes:
+      # Hier spiegelst du den Ordner:
+      - /mnt/NAS/BzT:/app/Files/BzT
     restart: always
