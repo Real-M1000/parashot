@@ -6,11 +6,11 @@ from flask import Flask, send_from_directory, render_template_string
 
 app = Flask(__name__)
 
+# Pfad zu deinen Bildern im Container
 IMAGE_FOLDER = '/app/Files/BzT'
 
 def get_next_shabbat():
     today = datetime.now()
-    # Berechnet Tage bis zum nächsten Samstag
     days_until_shabbat = (5 - today.weekday()) % 7
     target_date = today + timedelta(days=days_until_shabbat)
     return target_date.strftime("%Y-%m-%d")
@@ -21,33 +21,28 @@ def get_current_event():
     params = {
         "v": "1",
         "cfg": "json",
-        "maj": "on", # Große Feiertage
+        "maj": "on",
         "parashat": "on",
         "start": shabbat_date,
         "end": shabbat_date
     }
-    
     try:
         response = requests.get(url, params=params, timeout=10)
         data = response.json()
-        
         items = data.get("items", [])
-        
-        # 1. Suche nach Parasha (Normalfall)
         for item in items:
             if item.get("category") == "parashat":
                 return item.get("title").replace("Parashat ", "")
-        
-        # 2. Falls keine Parasha (z.B. wegen Pessach), nimm den Feiertag
         for item in items:
             if item.get("category") == "holiday":
                 return item.get("title")
-                
     except Exception as e:
         print(f"Fehler: {e}")
     return "Kein Event"
 
 def clean_name(name):
+    if not name:
+        return ""
     return re.sub(r'[^a-z0-9]', '', name.lower())
 
 @app.route('/bilder/<filename>')
@@ -56,7 +51,7 @@ def serve_image(filename):
 
 @app.route('/')
 def gallery():
-    event_name = get_current_event() # Dies wird am 4. April "Pesach I" o.ä. sein
+    event_name = get_current_event()
     valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.webp')
     
     try:
@@ -69,109 +64,64 @@ def gallery():
     match = None
     search_term = clean_name(event_name)
     
-    # Suche nach Match im Dateinamen
     for img in images:
         if search_term in clean_name(img):
             match = img
             break
+            
+    if not match and "pesach" in search_term:
+        for img in images:
+            if "pesach" in clean_name(img):
+                match = img
+                break
 
-html_template = """
+    html_template = """
     <!DOCTYPE html>
     <html lang="de">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{ event_name }}</title>
         <style>
-            /* Grund-Setup: Kein Scrollen, schwarzer Hintergrund */
             body, html { 
-                margin: 0; 
-                padding: 0; 
-                width: 100%; 
-                height: 100%; 
-                background-color: black; 
-                color: white; 
-                font-family: sans-serif;
-                overflow: hidden; /* Verhindert Scrollbalken im Vollbild */
+                margin: 0; padding: 0; width: 100%; height: 100%; 
+                background: black; color: white; font-family: sans-serif; overflow: hidden; 
             }
-
-            /* Container für das Hauptbild */
             .fullscreen-container {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                width: 100vw;
-                height: 100vh;
-                position: relative;
+                display: flex; justify-content: center; align-items: center;
+                width: 100vw; height: 100vh; position: relative;
             }
-
-            /* Das Bild selbst: Maximale Größe bei Erhalt der Proportionen */
-            .main-img {
-                max-width: 100%;
-                max-height: 100%;
-                object-fit: contain; /* Bild wird nicht beschnitten */
-            }
-
-            /* Overlay-Text (Titel der Parasha) */
+            .main-img { max-width: 100%; max-height: 100%; object-fit: contain; }
             .overlay-title {
-                position: absolute;
-                top: 20px;
-                background: rgba(0, 0, 0, 0.6);
-                padding: 10px 20px;
-                border-radius: 10px;
-                color: #f1c40f;
-                font-size: 2em;
-                pointer-events: none; /* Klicks gehen durch den Text aufs Bild */
+                position: absolute; top: 20px; background: rgba(0, 0, 0, 0.6);
+                padding: 10px 20px; border-radius: 10px; color: #f1c40f; font-size: 2em;
             }
-
-            /* Mini-Galerie am unteren Rand (optional, sehr dezent) */
             .mini-footer {
-                position: absolute;
-                bottom: 10px;
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                gap: 5px;
-                opacity: 0.3;
-                transition: opacity 0.3s;
+                position: absolute; bottom: 10px; width: 100%; display: flex;
+                justify-content: center; gap: 5px; opacity: 0.1; transition: opacity 0.3s;
             }
             .mini-footer:hover { opacity: 1; }
             .mini-footer img { height: 40px; border: 1px solid #fff; }
-
-            .error-msg {
-                text-align: center;
-                border: 2px dashed #444;
-                padding: 40px;
-            }
         </style>
     </head>
     <body>
-
         <div class="fullscreen-container">
             {% if match %}
                 <div class="overlay-title">{{ event_name }}</div>
-                <img src="/bilder/{{ match }}" class="main-img" alt="{{ event_name }}">
+                <img src="/bilder/{{ match }}" class="main-img">
             {% else %}
-                <div class="error-msg">
+                <div style="text-align:center; border: 2px dashed #444; padding: 40px;">
                     <h1>{{ event_name }}</h1>
-                    <p>Keine passende Datei gefunden.</p>
-                    <p>Gesucht wurde nach: <b>{{ event_name }}</b></p>
+                    <p>Datei nicht gefunden. Suche nach: <b>{{ event_name }}</b></p>
                 </div>
             {% endif %}
         </div>
-
         <div class="mini-footer">
-            {% for img in images %}
-                <img src="/bilder/{{ img }}" title="{{ img }}">
-            {% endfor %}
+            {% for img in images %}<img src="/bilder/{{ img }}">{% endfor %}
         </div>
-
     </body>
     </html>
     """
     return render_template_string(html_template, event_name=event_name, match=match, images=images)
 
 if __name__ == '__main__':
-    # host='0.0.0.0' ist entscheidend für den Zugriff von anderen Geräten!
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000)
