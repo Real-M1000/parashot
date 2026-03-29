@@ -37,7 +37,7 @@ def get_current_event():
             if item.get("category") == "holiday":
                 return item.get("title")
     except Exception as e:
-        print(f"Fehler bei API: {e}")
+        print(f"Fehler: {e}")
     return "Kein Event"
 
 def clean_name(name):
@@ -80,51 +80,42 @@ def gallery():
     <html lang="de">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{ event_name }}</title>
         <style>
             body, html { 
-                margin: 0; padding: 0; width: 100vw; height: 100vh; 
-                background-color: black; color: white; font-family: sans-serif;
-                overflow: hidden; 
+                margin: 0; padding: 0; width: 100%; height: 100%; 
+                background: black; color: white; font-family: sans-serif; overflow: hidden; 
             }
-            .fullscreen-wrapper {
-                position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-                display: flex; justify-content: center; align-items: center; z-index: 1;
+            .fullscreen-container {
+                display: flex; justify-content: center; align-items: center;
+                width: 100vw; height: 100vh; position: relative;
             }
-            .main-img {
-                max-width: 100%; max-height: 100%; width: auto; height: auto;
-                object-fit: contain;
+            .main-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+            .overlay-title {
+                position: absolute; top: 20px; background: rgba(0, 0, 0, 0.6);
+                padding: 10px 20px; border-radius: 10px; color: #f1c40f; font-size: 2em;
             }
-            .overlay-header {
-                position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
-                z-index: 10; background: rgba(0, 0, 0, 0.7); padding: 10px 25px;
-                border-radius: 10px; color: #f1c40f; font-size: 2.2em;
-                text-shadow: 2px 2px 4px #000; pointer-events: none;
+            .mini-footer {
+                position: absolute; bottom: 10px; width: 100%; display: flex;
+                justify-content: center; gap: 5px; opacity: 0.1; transition: opacity 0.3s;
             }
-            .decent-footer {
-                position: fixed; bottom: 5px; left: 0; width: 100%;
-                display: flex; justify-content: center; gap: 5px; z-index: 5;
-                opacity: 0.1; transition: opacity 0.4s;
-            }
-            .decent-footer:hover { opacity: 1; }
-            .decent-footer img { height: 40px; border: 1px solid #444; }
-            .error-box { text-align: center; border: 2px dashed #666; padding: 40px; }
+            .mini-footer:hover { opacity: 1; }
+            .mini-footer img { height: 40px; border: 1px solid #fff; }
         </style>
     </head>
     <body>
-        <div class="fullscreen-wrapper">
+        <div class="fullscreen-container">
             {% if match %}
-                <div class="overlay-header">{{ event_name }}</div>
+                <div class="overlay-title">{{ event_name }}</div>
                 <img src="/bilder/{{ match }}" class="main-img">
             {% else %}
-                <div class="error-box">
+                <div style="text-align:center; border: 2px dashed #444; padding: 40px;">
                     <h1>{{ event_name }}</h1>
-                    <p>Kein passendes Bild gefunden.</p>
+                    <p>Datei nicht gefunden. Suche nach: <b>{{ event_name }}</b></p>
                 </div>
             {% endif %}
         </div>
-        <div class="decent-footer">
+        <div class="mini-footer">
             {% for img in images %}<img src="/bilder/{{ img }}">{% endfor %}
         </div>
     </body>
