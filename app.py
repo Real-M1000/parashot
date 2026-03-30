@@ -10,7 +10,7 @@ app = Flask(__name__)
 IMAGE_FOLDER = '/app/Files/BzT'
 
 def get_next_shabbat():
-    today = datetime(2026, 4, 15)
+    today = datetime(2026, 4, 29)
     days_until_shabbat = (5 - today.weekday()) % 7
     target_date = today + timedelta(days=days_until_shabbat)
     return target_date.strftime("%Y-%m-%d")
