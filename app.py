@@ -11,7 +11,7 @@ IMAGE_FOLDER = '/app/Files/BzT'
 
 def get_next_shabbat():
     # Dein Test-Datum: 29. April 2026
-    today = datetime(2026, 4, 29)
+    today = datetime(2026, 3, 30)
     days_until_shabbat = (5 - today.weekday()) % 7
     target_date = today + timedelta(days=days_until_shabbat)
     return target_date.strftime("%Y-%m-%d")
@@ -108,7 +108,6 @@ def gallery():
     </head>
     <body>
         <div class="fullscreen-box">
-            <div class="title-overlay">{{ event_name }}</div>
             {% if match %}
                 <img src="/bilder/{{ match }}" class="main-img">
             {% else %}
